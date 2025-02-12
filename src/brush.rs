@@ -1,7 +1,7 @@
 // Copyright 2022 the Peniko Authors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
-use super::{Color, Gradient, Image};
+use super::{Color, Gradient, Image, ProcedureImage};
 
 /// Describes the color content of a filled or stroked shape.
 ///
@@ -15,6 +15,8 @@ pub enum Brush {
     Gradient(Gradient),
     /// Image brush.
     Image(Image),
+    ///Procedure Image brush
+    ProcedureImage(ProcedureImage),
 }
 
 impl From<Color> for Brush {
@@ -26,6 +28,12 @@ impl From<Color> for Brush {
 impl From<Gradient> for Brush {
     fn from(g: Gradient) -> Self {
         Self::Gradient(g)
+    }
+}
+
+impl From<ProcedureImage> for Brush {
+    fn from(value: ProcedureImage) -> Self {
+        Self::ProcedureImage(value)
     }
 }
 
@@ -48,6 +56,8 @@ pub enum BrushRef<'a> {
     Gradient(&'a Gradient),
     /// Image brush.
     Image(&'a Image),
+    /// Procedure Image
+    ProcedureImage(ProcedureImage),
 }
 
 impl<'a> BrushRef<'a> {
@@ -58,6 +68,7 @@ impl<'a> BrushRef<'a> {
             Self::Solid(color) => Brush::Solid(*color),
             Self::Gradient(gradient) => Brush::Gradient((*gradient).clone()),
             Self::Image(image) => Brush::Image((*image).clone()),
+            Self::ProcedureImage(value) => Brush::ProcedureImage(*value),
         }
     }
 }
@@ -86,12 +97,25 @@ impl<'a> From<&'a Image> for BrushRef<'a> {
     }
 }
 
+impl From<ProcedureImage> for BrushRef<'_> {
+    fn from(value: ProcedureImage) -> Self {
+        Self::ProcedureImage(value)
+    }
+}
+
+impl<'a> From<&'a ProcedureImage> for BrushRef<'_> {
+    fn from(value: &'a ProcedureImage) -> Self {
+        Self::ProcedureImage(*value)
+    }
+}
+
 impl<'a> From<&'a Brush> for BrushRef<'a> {
     fn from(brush: &'a Brush) -> Self {
         match brush {
             Brush::Solid(color) => Self::Solid(*color),
             Brush::Gradient(gradient) => Self::Gradient(gradient),
             Brush::Image(image) => Self::Image(image),
+            Brush::ProcedureImage(value) => Self::ProcedureImage(*value),
         }
     }
 }

@@ -21,6 +21,7 @@ mod color;
 mod font;
 mod gradient;
 mod image;
+mod procedure_image;
 mod style;
 
 /// Re-export of the kurbo 2D curve library.
@@ -33,4 +34,5 @@ pub use color::Color;
 pub use font::Font;
 pub use gradient::{ColorStop, ColorStops, ColorStopsSource, Gradient, GradientKind};
 pub use image::{Format, Image};
+pub use procedure_image::{ProcedureFireImageConfig, ProcedureImage};
 pub use style::{Fill, Style, StyleRef};
