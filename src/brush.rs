@@ -1,6 +1,8 @@
 // Copyright 2022 the Peniko Authors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
+use crate::ImageUsageType;
+
 use super::{Color, Gradient, Image, ProcedureImage};
 
 /// Describes the color content of a filled or stroked shape.

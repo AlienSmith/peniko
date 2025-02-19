@@ -26,6 +26,14 @@ impl Format {
     }
 }
 
+#[derive(Clone, PartialEq, Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub enum ImageUsageType {
+    TRANSPARENT,
+    MASKED,
+    NORMAL,
+}
+
 /// Owned shareable image resource.
 #[derive(Clone, PartialEq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -40,6 +48,8 @@ pub struct Image {
     pub height: u32,
     /// Extend mode
     pub extend: Extend,
+    /// Usage of this image.
+    pub usage: ImageUsageType,
 }
 
 impl Image {
@@ -52,6 +62,7 @@ impl Image {
             width,
             height,
             extend: Extend::Pad,
+            usage: ImageUsageType::TRANSPARENT,
         }
     }
 
@@ -59,6 +70,12 @@ impl Image {
     #[must_use]
     pub fn with_extend(mut self, mode: Extend) -> Self {
         self.extend = mode;
+        self
+    }
+
+    #[must_use]
+    pub fn with_usage(mut self, usage: ImageUsageType) -> Self {
+        self.usage = usage;
         self
     }
 }

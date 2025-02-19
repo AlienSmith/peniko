@@ -33,6 +33,6 @@ pub use brush::{Brush, BrushRef, Extend};
 pub use color::Color;
 pub use font::Font;
 pub use gradient::{ColorStop, ColorStops, ColorStopsSource, Gradient, GradientKind};
-pub use image::{Format, Image};
+pub use image::{Format, Image, ImageUsageType};
 pub use procedure_image::{ProcedureFireImageConfig, ProcedureImage};
 pub use style::{Fill, Style, StyleRef};
