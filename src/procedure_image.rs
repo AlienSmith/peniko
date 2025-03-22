@@ -1,4 +1,5 @@
 #[derive(Copy, Clone, PartialEq, Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ProcedureFireImageConfig {
     pub detail_strength: f32,
     pub scroll_speed: f32,

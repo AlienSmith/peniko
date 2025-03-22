@@ -1,7 +1,7 @@
 // Copyright 2022 the Peniko Authors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
-use crate::ImageUsageType;
+use crate::image::PBRImages;
 
 use super::{Color, Gradient, Image, ProcedureImage};
 
@@ -19,6 +19,8 @@ pub enum Brush {
     Image(Image),
     ///Procedure Image brush
     ProcedureImage(ProcedureImage),
+    /// PbrImages,
+    PBRImage(PBRImages),
 }
 
 impl From<Color> for Brush {
@@ -36,6 +38,12 @@ impl From<Gradient> for Brush {
 impl From<ProcedureImage> for Brush {
     fn from(value: ProcedureImage) -> Self {
         Self::ProcedureImage(value)
+    }
+}
+
+impl From<PBRImages> for Brush {
+    fn from(images: PBRImages) -> Self {
+        Self::PBRImage(images)
     }
 }
 
@@ -60,6 +68,8 @@ pub enum BrushRef<'a> {
     Image(&'a Image),
     /// Procedure Image
     ProcedureImage(ProcedureImage),
+    /// PbrImages,
+    PBRImage(&'a PBRImages),
 }
 
 impl<'a> BrushRef<'a> {
@@ -71,6 +81,7 @@ impl<'a> BrushRef<'a> {
             Self::Gradient(gradient) => Brush::Gradient((*gradient).clone()),
             Self::Image(image) => Brush::Image((*image).clone()),
             Self::ProcedureImage(value) => Brush::ProcedureImage(*value),
+            Self::PBRImage(value) => Brush::PBRImage((*value).clone()),
         }
     }
 }
@@ -99,6 +110,12 @@ impl<'a> From<&'a Image> for BrushRef<'a> {
     }
 }
 
+impl<'a> From<&'a PBRImages> for BrushRef<'a> {
+    fn from(images: &'a PBRImages) -> Self {
+        Self::PBRImage(images)
+    }
+}
+
 impl From<ProcedureImage> for BrushRef<'_> {
     fn from(value: ProcedureImage) -> Self {
         Self::ProcedureImage(value)
@@ -118,6 +135,7 @@ impl<'a> From<&'a Brush> for BrushRef<'a> {
             Brush::Gradient(gradient) => Self::Gradient(gradient),
             Brush::Image(image) => Self::Image(image),
             Brush::ProcedureImage(value) => Self::ProcedureImage(*value),
+            Brush::PBRImage(pbrimages) => Self::PBRImage(pbrimages),
         }
     }
 }

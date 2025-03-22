@@ -34,12 +34,21 @@ pub enum ImageUsageType {
     NORMAL,
 }
 
+#[cfg(feature = "serde")]
+use std::sync::atomic::{AtomicU32, Ordering};
+#[cfg(feature = "serde")]
+use std::sync::Arc;
+#[cfg(feature = "serde")]
+use once_cell::sync::Lazy;
+#[cfg(feature = "serde")]
+static IMAGE_TRACE_ID_COUNTER: Lazy<Arc<AtomicU32>> = Lazy::new(|| Arc::new(AtomicU32::new(0)));
+
 /// Owned shareable image resource.
 #[derive(Clone, PartialEq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct Image {
     /// Blob containing the image data.
-    pub data: Blob<u8>,
+    pub data: Option<Blob<u8>>,
     /// Pixel format of the image.
     pub format: Format,
     /// Width of the image.
@@ -50,6 +59,8 @@ pub struct Image {
     pub extend: Extend,
     /// Usage of this image.
     pub usage: ImageUsageType,
+    #[cfg(feature = "serde")]
+    pub trace_id: u32,
 }
 
 impl Image {
@@ -57,12 +68,14 @@ impl Image {
     #[must_use]
     pub fn new(data: Blob<u8>, format: Format, width: u32, height: u32) -> Self {
         Self {
-            data,
+            data: Some(data),
             format,
             width,
             height,
             extend: Extend::Pad,
             usage: ImageUsageType::TRANSPARENT,
+            #[cfg(feature = "serde")]
+            trace_id: IMAGE_TRACE_ID_COUNTER.fetch_add(1, Ordering::SeqCst),
         }
     }
 
@@ -77,5 +90,34 @@ impl Image {
     pub fn with_usage(mut self, usage: ImageUsageType) -> Self {
         self.usage = usage;
         self
+    }
+}
+
+#[cfg(feature = "serde")]
+static PBR_IMAGE_TRACE_ID_COUNTER: Lazy<Arc<AtomicU32>> = Lazy::new(|| Arc::new(AtomicU32::new(0)));
+
+/// Definition of a gradient that transitions between two or more colors.
+#[derive(Clone, PartialEq, Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct PBRImages {
+    pub albedo: Image,
+    pub normals: Image,
+    pub metallic: f32,
+    pub roughness: f32,
+    #[cfg(feature = "serde")]
+    pub trace_id: u32,
+}
+
+impl PBRImages {
+    #[must_use]
+    pub fn new(albedo: Image, normals: Image, metallic: f32, roughness: f32) -> Self {
+        Self {
+            albedo: albedo.with_usage(ImageUsageType::MASKED),
+            normals: normals.with_usage(ImageUsageType::NORMAL),
+            metallic,
+            roughness,
+            #[cfg(feature = "serde")]
+            trace_id: PBR_IMAGE_TRACE_ID_COUNTER.fetch_add(1, Ordering::SeqCst),
+        }
     }
 }
