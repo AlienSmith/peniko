@@ -24,7 +24,7 @@ features = ["serde"]
 
 [dependencies]
 # NOTE: Make sure to keep this in sync with the version badge in README.md
-kurbo = { version = "0.11.0", default-features = false }
+kurbo = { version = "0.11.1", default-features = false }
 smallvec = "1.13.2"
 once_cell = "1.19.0"
 
