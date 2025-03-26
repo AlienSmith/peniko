@@ -30,7 +30,7 @@ pub use kurbo;
 pub use blend::{BlendMode, Compose, Mix};
 pub use blob::{Blob, WeakBlob};
 pub use brush::{Brush, BrushRef, Extend};
-pub use color::Color;
+pub use color::{Color, GlowColor};
 pub use font::Font;
 pub use gradient::{ColorStop, ColorStops, ColorStopsSource, Gradient, GradientKind};
 pub use image::{Format, Image, ImageUsageType, PBRImages};

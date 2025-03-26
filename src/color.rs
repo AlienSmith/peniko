@@ -7,6 +7,19 @@
 #[allow(unused_imports)]
 use kurbo::common::FloatFuncs as _;
 
+#[derive(Copy, Clone, PartialEq, PartialOrd, Default, Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct GlowColor{
+    pub color: Color,
+    pub glow: f32,
+}
+
+impl GlowColor{
+    pub fn new(color: Color, glow: f32) -> Self{
+        Self { color, glow }
+    }
+}
+
 /// 32-bit RGBA color.
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Hash, Default, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]

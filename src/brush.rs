@@ -1,7 +1,7 @@
 // Copyright 2022 the Peniko Authors
 // SPDX-License-Identifier: Apache-2.0 OR MIT
 
-use crate::image::PBRImages;
+use crate::{color::GlowColor, image::PBRImages};
 
 use super::{Color, Gradient, Image, ProcedureImage};
 
@@ -11,6 +11,7 @@ use super::{Color, Gradient, Image, ProcedureImage};
 #[derive(Clone, PartialEq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub enum Brush {
+    SolidGlow(GlowColor),
     /// Solid color brush.
     Solid(Color),
     /// Gradient brush.
@@ -21,6 +22,12 @@ pub enum Brush {
     ProcedureImage(ProcedureImage),
     /// PbrImages,
     PBRImage(PBRImages),
+}
+
+impl From<GlowColor> for Brush {
+    fn from(g: GlowColor) -> Self{
+        Self::SolidGlow(g)
+    }
 }
 
 impl From<Color> for Brush {
@@ -62,6 +69,8 @@ impl Default for Brush {
 pub enum BrushRef<'a> {
     /// Solid color brush.
     Solid(Color),
+    /// Solid color exceeding 1.
+    SolidGlow(GlowColor),
     /// Gradient brush.
     Gradient(&'a Gradient),
     /// Image brush.
@@ -78,6 +87,7 @@ impl<'a> BrushRef<'a> {
     pub fn to_owned(&self) -> Brush {
         match self {
             Self::Solid(color) => Brush::Solid(*color),
+            Self::SolidGlow(glow_color) => Brush::SolidGlow(*glow_color),
             Self::Gradient(gradient) => Brush::Gradient((*gradient).clone()),
             Self::Image(image) => Brush::Image((*image).clone()),
             Self::ProcedureImage(value) => Brush::ProcedureImage(*value),
@@ -89,6 +99,12 @@ impl<'a> BrushRef<'a> {
 impl From<Color> for BrushRef<'_> {
     fn from(color: Color) -> Self {
         Self::Solid(color)
+    }
+}
+
+impl From<GlowColor> for BrushRef<'_> {
+    fn from(glow_color: GlowColor) -> Self{
+        Self::SolidGlow(glow_color)
     }
 }
 
@@ -132,6 +148,7 @@ impl<'a> From<&'a Brush> for BrushRef<'a> {
     fn from(brush: &'a Brush) -> Self {
         match brush {
             Brush::Solid(color) => Self::Solid(*color),
+            Brush::SolidGlow(glow_color) => Self::SolidGlow(*glow_color),
             Brush::Gradient(gradient) => Self::Gradient(gradient),
             Brush::Image(image) => Self::Image(image),
             Brush::ProcedureImage(value) => Self::ProcedureImage(*value),
