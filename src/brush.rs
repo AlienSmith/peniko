@@ -72,7 +72,7 @@ pub enum BrushRef<'a> {
     /// Solid color exceeding 1.
     SolidGlow(GlowColor),
     /// Gradient brush.
-    Gradient(&'a Gradient),
+    Gradient(Gradient),
     /// Image brush.
     Image(&'a Image),
     /// Procedure Image
@@ -114,9 +114,9 @@ impl<'a> From<&'a Color> for BrushRef<'_> {
     }
 }
 
-impl<'a> From<&'a Gradient> for BrushRef<'a> {
+impl<'a> From<&'a Gradient> for BrushRef<'_> {
     fn from(gradient: &'a Gradient) -> Self {
-        Self::Gradient(gradient)
+        Self::Gradient((*gradient).clone())
     }
 }
 
@@ -149,7 +149,7 @@ impl<'a> From<&'a Brush> for BrushRef<'a> {
         match brush {
             Brush::Solid(color) => Self::Solid(*color),
             Brush::SolidGlow(glow_color) => Self::SolidGlow(*glow_color),
-            Brush::Gradient(gradient) => Self::Gradient(gradient),
+            Brush::Gradient(gradient) => Self::Gradient((*gradient).clone()),
             Brush::Image(image) => Self::Image(image),
             Brush::ProcedureImage(value) => Self::ProcedureImage(*value),
             Brush::PBRImage(pbrimages) => Self::PBRImage(pbrimages),
