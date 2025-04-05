@@ -35,11 +35,11 @@ pub enum ImageUsageType {
 }
 
 #[cfg(feature = "serde")]
+use once_cell::sync::Lazy;
+#[cfg(feature = "serde")]
 use std::sync::atomic::{AtomicU32, Ordering};
 #[cfg(feature = "serde")]
 use std::sync::Arc;
-#[cfg(feature = "serde")]
-use once_cell::sync::Lazy;
 #[cfg(feature = "serde")]
 static IMAGE_TRACE_ID_COUNTER: Lazy<Arc<AtomicU32>> = Lazy::new(|| Arc::new(AtomicU32::new(0)));
 
@@ -59,8 +59,26 @@ pub struct Image {
     pub extend: Extend,
     /// Usage of this image.
     pub usage: ImageUsageType,
+    /// Sprite sheet configs.
+    pub sprite_sheet: Option<SpriteSheet>,
     #[cfg(feature = "serde")]
     pub trace_id: u32,
+}
+
+#[derive(Clone, PartialEq, Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct SpriteSheet {
+    pub width: u32,
+    pub height: u32,
+    pub frame_count: u32,
+}
+
+#[derive(Clone, PartialEq, Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct SpriteSheetPlayConfig{
+    pub play_in_loop: bool,
+    pub fps: f32,
+    pub start_time: f32,
 }
 
 impl Image {
@@ -74,6 +92,7 @@ impl Image {
             height,
             extend: Extend::Pad,
             usage: ImageUsageType::TRANSPARENT,
+            sprite_sheet: None,
             #[cfg(feature = "serde")]
             trace_id: IMAGE_TRACE_ID_COUNTER.fetch_add(1, Ordering::SeqCst),
         }
@@ -89,6 +108,12 @@ impl Image {
     #[must_use]
     pub fn with_usage(mut self, usage: ImageUsageType) -> Self {
         self.usage = usage;
+        self
+    }
+
+    #[must_use]
+    pub fn with_sprite_sheet(mut self, sprite_sheet: Option<SpriteSheet>) -> Self {
+        self.sprite_sheet = sprite_sheet;
         self
     }
 }
