@@ -61,6 +61,8 @@ pub struct Image {
     pub usage: ImageUsageType,
     /// Sprite sheet configs.
     pub sprite_sheet: Option<SpriteSheet>,
+    /// Mip flags: 0 = full mipmap chain, 1 = mip 0 only (no mipmap).
+    pub mip_flags: u32,
     #[cfg(feature = "serde")]
     pub trace_id: u32,
 }
@@ -75,7 +77,7 @@ pub struct SpriteSheet {
 
 #[derive(Clone, PartialEq, Debug)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-pub struct SpriteSheetPlayConfig{
+pub struct SpriteSheetPlayConfig {
     pub play_in_loop: bool,
     pub fps: f32,
     pub start_time: f32,
@@ -93,6 +95,7 @@ impl Image {
             extend: Extend::Pad,
             usage: ImageUsageType::TRANSPARENT,
             sprite_sheet: None,
+            mip_flags: 0,
             #[cfg(feature = "serde")]
             trace_id: IMAGE_TRACE_ID_COUNTER.fetch_add(1, Ordering::SeqCst),
         }
